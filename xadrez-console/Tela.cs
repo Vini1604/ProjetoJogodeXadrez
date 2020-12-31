@@ -6,7 +6,8 @@ using System.Collections.Generic;
 namespace xadrez_console {
     class Tela {
 
-        public static void imprimirPartida (PartidaDeXadrez partida) {
+        public static void imprimirPartida(PartidaDeXadrez partida) {
+
             imprimirTabuleiro(partida.tab);
             Console.WriteLine();
             imprimirPecasCapturadas(partida);
@@ -26,7 +27,7 @@ namespace xadrez_console {
                 Console.WriteLine("Vencedor: " + partida.jogadorAtual);
             }
         }
-
+        
         public static void imprimirPecasCapturadas (PartidaDeXadrez partida) {
             Console.WriteLine("Peças capturadas:");
             Console.Write("Brancas: ");
@@ -49,7 +50,7 @@ namespace xadrez_console {
         public static void imprimirTabuleiro (Tabuleiro tab) {
 
             for (int i = 0; i < tab.linhas; i++) {
-                Console.Write(8 - i + " ");
+                Console.Write(8 - i + "  ");
                 for (int j = 0; j < tab.colunas; j++) {
                     
                     imprimirPeca(tab.peca(i, j));
@@ -57,7 +58,7 @@ namespace xadrez_console {
                 }
                 Console.WriteLine();
             }
-            Console.WriteLine("  A B C D E F G H");
+            Console.WriteLine("   A B C D E F G H");
         }
 
         public static void imprimirTabuleiro(Tabuleiro tab, bool [,] posicoesPossiveis) {
@@ -80,7 +81,7 @@ namespace xadrez_console {
                 }
                 Console.WriteLine();
             }
-            Console.WriteLine("  A B C D E F G H");
+            Console.WriteLine("   A B C D E F G H");
             Console.BackgroundColor = fundoOriginal;
         }
 

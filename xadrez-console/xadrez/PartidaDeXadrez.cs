@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using tabuleiro;
+using xadrez_console;
+using System;
 
 namespace xadrez {
     class PartidaDeXadrez {
@@ -12,6 +14,7 @@ namespace xadrez {
         private HashSet<Peca> capturadas;
         public bool xeque { get; private set; }
         public Peca vulneravelEnPassant { get; private set; }
+        public bool promocao { get; private set; }
 
         public PartidaDeXadrez() {
             tab = new Tabuleiro(8, 8);
@@ -22,7 +25,8 @@ namespace xadrez {
             colocarPecas();
             terminada = false;
             xeque = false;
-            vulneravelEnPassant = null; ;
+            vulneravelEnPassant = null;
+            promocao = false;
             
         }
         public Peca executaMovimento(Posicao origem, Posicao destino) {
@@ -124,6 +128,59 @@ namespace xadrez {
                 throw new TabuleiroException("Você não pode se colocar em xeque!");
             }
 
+            Peca p = tab.peca(destino);
+
+            // #Jogada especial Promocao
+            if (p is Peao) {
+                if ((p.cor == Cor.Branca && destino.linha == 0) || (p.cor == Cor.Preta && destino.linha == 7)) {
+                    promocao = true;
+                    while (promocao == true) {
+                        try {
+                            Console.Clear();
+                            Tela.imprimirPartida(this);
+                            Console.WriteLine("Escolha uma peca a ser promovida D/B/C/T:");
+                            char novaPeca = Char.Parse(Console.ReadLine());
+                            p.tab.retirarPeca(destino);
+                            pecas.Remove(p);
+                            Peca pecaPromovida;
+                            if (novaPeca == 'D') {
+                                pecaPromovida = new Dama(tab, p.cor);
+                                tab.colocarPeca(pecaPromovida, destino);
+                                pecas.Add(pecaPromovida);
+                                promocao = false;
+                            }
+                            else if (novaPeca == 'B') {
+                                pecaPromovida = new Bispo(tab, p.cor);
+                                tab.colocarPeca(pecaPromovida, destino);
+                                pecas.Add(pecaPromovida);
+                                promocao = false;
+                            }
+                            else if (novaPeca == 'C') {
+                                pecaPromovida = new Cavalo(tab, p.cor);
+                                tab.colocarPeca(pecaPromovida, destino);
+                                pecas.Add(pecaPromovida);
+                                promocao = false;
+                            }
+                            else if (novaPeca == 'T') {
+                                pecaPromovida = new Torre(tab, p.cor);
+                                tab.colocarPeca(pecaPromovida, destino);
+                                pecas.Add(pecaPromovida);
+                                promocao = false;
+                            }
+                            else {
+                                throw new TabuleiroException("Não é possível promover a esse tipo de peça");
+
+                            }
+                        }
+                        catch(TabuleiroException e) {
+                            Console.WriteLine(e.Message);
+                            Console.ReadLine();
+                        }
+                     }
+
+                }
+            }
+
             if (estaEmXeque(adversaria(jogadorAtual))) {
                 xeque = true;
             }
@@ -137,8 +194,6 @@ namespace xadrez {
                 turno++;
                 mudaJogador();
             }
-
-            Peca p = tab.peca(destino);
 
             // #Jogada especial En Passant
             if (p is Peao && (destino.linha == origem.linha - 2 || destino.linha == origem.linha + 2)) {
